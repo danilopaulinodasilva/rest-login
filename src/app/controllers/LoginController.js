@@ -42,9 +42,10 @@ class LoginController {
 
         // CREATE A NEW REFRESH TOKEN, BASED ON ACCESS TOKEN
 
-        const refreshToken = req.body.token; // request the token
+        const refreshToken = req.body.token;
+        
         if (refreshToken == null) return res.sendStatus(401); // come nothing? 401 unauthorized
-        if (!refreshTokens.includes(refreshToken)) return res.sendStatus(403) // not found the access token in white list? 403 forbidden
+        if (!refreshTokens.includes(refreshToken)) return res.sendStatus(503) // not found the access token in white list? 403 forbidden
 
         handleJwt.auth(refreshToken,process.env.REFRESH_TOKEN_SECRET)
 
