@@ -1,10 +1,10 @@
-const connection = require('../../config/MysqlConfig');
+const connection = require('../../config/mysql');
 
 class Login {
 
   check(username,password) {
     
-    const table = process.env.TABLE; // pega a tabela nas variaveis de ambiente
+    const table = process.env.MYSQL_TABLE; // pega a tabela nas variaveis de ambiente
     
     return new Promise((resolve, reject) => {
       

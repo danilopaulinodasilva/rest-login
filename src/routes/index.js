@@ -2,15 +2,11 @@ const express = require('express'),
       routes  = express.Router();
 
 const LoginController = require('../app/controllers/LoginController');
-const LogMiddleware = require("../middleware/log");
 
 routes
-    .get('/', (req,res) => {
-        res.send("hello world")
-    })
     .post('/login', LoginController.login)
     .post('/auth', LoginController.auth)
-    .post('/token', LogMiddleware, LoginController.token)
+    .post('/token', LoginController.token)
     .delete('/logout', LoginController.logout);
 
 module.exports = routes;

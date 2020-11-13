@@ -14,7 +14,7 @@ class Server {
     middlewares() {
         this.server.use(express.json());
     }
-    
+
     cors() {
         this.server.use(cors());
     }

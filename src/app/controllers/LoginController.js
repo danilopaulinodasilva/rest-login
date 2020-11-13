@@ -1,10 +1,21 @@
 const Login = require("../models/LoginModel");
 const handleJwt = require("../helpers/handleJwt");
-const refreshTokens = [];
+const handleTokens = require("../helpers/handleTokens");
+const RedisService = require("../services/RedisService");
+
+// const refreshTokens = [];
 
 class LoginController {
 
-    login (req,res) {
+    async login (req,res) {
+
+        // console.log(await RedisService.keys());
+        // console.log(await RedisService.flushall());
+        // console.log(await handleTokens.includes());
+        // console.log(await RedisService.retrieve("refreshTokens"));
+        // RedisService.store();
+        // RedisService.delete();
+        // console.log(await RedisService.getToken('$2a$08$qnaDTlTP1UTDMbU183LVD.h8QIx/X/OhPZm5r4XKipbZxYSIb8/6.'));
 
         // CREATE A NEW TOKEN BASED IN USERNAME AND PASSWORD
 
@@ -25,8 +36,10 @@ class LoginController {
 
             const accessToken = handleJwt.access(user); // create access token with user object
             const refreshToken = handleJwt.refresh(user);  // create refresh token
-            refreshTokens.push(refreshToken); // should armazenate in redis or array
             
+            // RedisService.store("refreshTokens",username,refreshToken);
+            RedisService.storeToken(username,refreshToken);
+
             return res.status(200).json({ accessToken: accessToken, refreshToken: refreshToken }); // throw back the data
 
         })
@@ -38,28 +51,29 @@ class LoginController {
 
     }
 
-    token (req,res) {
+    async token (req,res) {
 
         // CREATE A NEW REFRESH TOKEN, BASED ON ACCESS TOKEN
 
         const refreshToken = req.body.token;
+        const includeToken = await handleTokens.includes(refreshToken);
         
         if (refreshToken == null) return res.sendStatus(401); // come nothing? 401 unauthorized
-        if (!refreshTokens.includes(refreshToken)) return res.sendStatus(503) // not found the access token in white list? 403 forbidden
+        if(!includeToken) return res.sendStatus(403) // not found the access token in white list? 403 forbidden
 
         handleJwt.auth(refreshToken,process.env.REFRESH_TOKEN_SECRET)
 
-        .then((data) =>{
-            const accessToken = handleJwt.access({ username: data.email, password: data.password, role: data.role }) // valid, generate a new access token????
-            res.json({ accessToken: accessToken });
+            .then((data) =>{
+                const accessToken = handleJwt.access({ username: data.email, password: data.password, role: data.role }) // valid, generate a new access token????
+                res.json({ accessToken: accessToken });
 
-        })
+            })
 
-        .catch((err) => {
-            console.log("token err",err);
-            return res.status(403).json(err);
+            .catch((err) => {
+                console.log("token err",err);
+                return res.status(403).json(err);
 
-        });
+            });
 
     }
 
@@ -88,7 +102,7 @@ class LoginController {
 
         // DESTROY THE TOKEN FROM REDIS OR ARRAY
         
-        refreshTokens = refreshTokens.filter(token => token !== req.body.token)
+        handleTokens.delete(req.body.token);
         return res.status(204)
 
     }
