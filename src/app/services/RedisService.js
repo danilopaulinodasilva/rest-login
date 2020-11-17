@@ -103,11 +103,9 @@ class RedisService {
             const decodeToken = handleJwt.decode(token);
             const key = decodeToken.guid;
 
-            console.log("inception");
-
             client.del(key, (err,reply) => {
-                if(err) console.log(err); reject(err);
-                console.log(reply); resolve(reply)
+                if(err) reject(err);
+                resolve(reply)
             });
 
         });

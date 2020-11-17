@@ -17,8 +17,6 @@ module.exports = {
 
     delete: async (token) => {
 
-        console.log("tenta");
-
         try {
             return await RedisService.delete(token);
 
