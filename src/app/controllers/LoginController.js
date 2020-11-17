@@ -106,12 +106,18 @@ class LoginController {
 
     }
 
-    logout (req, res) {
+    async logout (req, res) {
 
         // DESTROY THE TOKEN FROM REDIS OR ARRAY
         
-        handleTokens.delete(req.body.token);
-        return res.status(204)
+        try {
+            await handleTokens.delete(req.body.token);
+            return res.sendStatus(204);
+
+        } catch (err) {
+            return res.sendStatus(403);
+
+        }
 
     }
 

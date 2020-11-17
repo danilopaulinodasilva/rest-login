@@ -96,14 +96,18 @@ class RedisService {
 
     }
 
-    delete(key, column, row) {
+    delete(token) {
         
         return new Promise((resolve,reject) => {
 
-            client.hdel(key, [column, row], (err,reply) => {
-                if(err) reject(err);
-                resolve(reply);
+            const decodeToken = handleJwt.decode(token);
+            const key = decodeToken.guid;
 
+            console.log("inception");
+
+            client.del(key, (err,reply) => {
+                if(err) console.log(err); reject(err);
+                console.log(reply); resolve(reply)
             });
 
         });

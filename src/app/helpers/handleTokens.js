@@ -17,8 +17,10 @@ module.exports = {
 
     delete: async (token) => {
 
+        console.log("tenta");
+
         try {
-            return await RedisService.delete("refreshTokens",token);
+            return await RedisService.delete(token);
 
         } catch (err) {
             return err;
