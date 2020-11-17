@@ -28,17 +28,17 @@ class LoginController {
 
         .then((data) => {
 
+            const guid = data[0].guid;
             const username = data[0].email;
             const password = data[0].password;
             const role = data[0].role;
 
-            const user = { username: username, password: password, role: role };
+            const user = { guid: guid, username: username, password: password, role: role };
 
             const accessToken = handleJwt.access(user); // create access token with user object
             const refreshToken = handleJwt.refresh(user);  // create refresh token
-            
-            // RedisService.store("refreshTokens",username,refreshToken);
-            RedisService.storeToken(username,refreshToken);
+
+            RedisService.storeToken(guid,refreshToken);
 
             return res.status(200).json({ accessToken: accessToken, refreshToken: refreshToken }); // throw back the data
 
@@ -55,22 +55,30 @@ class LoginController {
 
         // CREATE A NEW REFRESH TOKEN, BASED ON ACCESS TOKEN
 
-        const refreshToken = req.body.token;
-        const includeToken = await handleTokens.includes(refreshToken);
+        const refreshToken = req.body.token; // get the token given in body request
+        const includeToken = await handleTokens.includes(refreshToken); // check if the token exists in redis
         
-        if (refreshToken == null) return res.sendStatus(401); // come nothing? 401 unauthorized
-        if(!includeToken) return res.sendStatus(403) // not found the access token in white list? 403 forbidden
+        if (refreshToken == null) return res.sendStatus(401); // request came empty? 401 unauthorized
+        if(!includeToken) return res.sendStatus(403) // not found the access token in redis? 403 forbidden
 
         handleJwt.auth(refreshToken,process.env.REFRESH_TOKEN_SECRET)
 
-            .then((data) =>{
-                const accessToken = handleJwt.access({ username: data.email, password: data.password, role: data.role }) // valid, generate a new access token????
+            .then((data) => {
+
+                const guid = data.user.guid; 
+                const username = data.user.username;
+                const password = data.user.password;
+                const role = data.user.role;
+                
+                const accessToken = handleJwt.access({ guid, username, password, role }) // valid, generate a new access token????
+
+                // RedisService.storeToken(guid,refreshToken); // save the token again?
                 res.json({ accessToken: accessToken });
 
             })
 
             .catch((err) => {
-                console.log("token err",err);
+                console.log("token err aoba",err);
                 return res.status(403).json(err);
 
             });

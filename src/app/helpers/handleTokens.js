@@ -3,21 +3,19 @@ const RedisService = require("../services/RedisService");
 module.exports = {
 
     includes: async (token) => {
-
+        
         try {
-            const tokens = await RedisService.getToken(token);
-            const values = Object.values(tokens);
-            const check = values.includes(token);
-            return check;
+            return await RedisService.getToken(token);
             
         } catch (err) {
-            return err;
+            console.log("oi?",err);
+            return false;
 
         }
 
     },
 
-    delete: async (token,) => {
+    delete: async (token) => {
 
         try {
             return await RedisService.delete("refreshTokens",token);

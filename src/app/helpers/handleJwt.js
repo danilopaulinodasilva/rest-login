@@ -21,6 +21,11 @@ module.exports = {
 
         });
         
+    },
+
+    decode: (token) => {
+        return jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
+
     }
 
 }

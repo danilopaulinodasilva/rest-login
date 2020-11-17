@@ -8,7 +8,7 @@ class Login {
     
     return new Promise((resolve, reject) => {
       
-      connection.query(`SELECT email, password, role FROM ${table} WHERE email = '${username}' AND password = '${password}'`, (err, res) => {
+      connection.query(`SELECT guid, email, password, role FROM ${table} WHERE email = '${username}' AND password = '${password}'`, (err, res) => {
 
           if((err)) {
             console.log(err); 
