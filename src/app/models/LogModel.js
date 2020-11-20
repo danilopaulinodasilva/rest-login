@@ -7,7 +7,7 @@ class Log {
         const table = "log";
 
         return new Promise((resolve, reject) => {
-          
+
           connection.query(`INSERT INTO ${table} (id, guid, page, download, ipaddress) VALUES (NULL, '${guid}', '${page}', '${download}', '${ipaddress}');`, (err,res) => {
     
               if((err)) {

@@ -1,3 +1,4 @@
+const { stringify } = require("uuid");
 const Log = require("../models/LogModel");
 
 class LogController {
@@ -13,21 +14,29 @@ class LogController {
         Log.save(guid, "", "", ip)
 
             .then((response) => {
-                res.sendStatus(204);
+                res.status(204).json({"ok":true});
             }) 
             
             .catch((err) => {
-                res.sendStatus(400);
+                res.status(400).json({"ok":false});
             });
 
     }
 
     page(req,res) {
 
-        Log.save(req.body.guid,req.body.page,null,req.body.ip)
+        const guid = req.body.guid;
+        const page = req.body.page;
+        const ip = req.body.ip;
+
+        if (typeof(guid) == 'undefined') return res.status(400).json({"guid":"required field"});
+        if (typeof(page) == 'undefined') return res.status(400).json({"page":"required field"});
+        if (typeof(ip) == 'undefined') return res.status(401).json({"ipaddress":"required field"});
+
+        Log.save(guid,page,"",ip)
 
             .then((response) => {
-                res.sendStatus(403);
+                res.sendStatus(204);
             })
 
             .catch((err) => {
@@ -38,11 +47,18 @@ class LogController {
 
     download(req,res) {
         
-     // Log.save(guid,page,download,ipaddress)
-        Log.save(req.body.guid,null, req.body.file, req.body.ip)
+        const guid = req.body.guid;
+        const file = req.body.file;
+        const ip = req.body.ip;
+        
+        if (typeof(guid) == 'undefined') return res.status(400).json({"guid":"required field"})
+        if (typeof(file) == 'undefined') return res.status(400).json({"file":"required field"})
+        if (typeof(ip) == 'undefined') return res.status(400).json({"ip":"required field"})
+
+        Log.save(guid,"",file,ip)
 
             .then((response) => {
-                res.sendStatus(403);
+                res.sendStatus(204);
             }) 
             
             .catch((err) => {
