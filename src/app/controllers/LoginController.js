@@ -40,7 +40,7 @@ class LoginController {
 
             RedisService.storeToken(guid,refreshToken);
 
-            return res.status(200).json({ accessToken: accessToken, refreshToken: refreshToken }); // throw back the data
+            return res.status(200).json({ guid: guid, role: role, accessToken: accessToken, refreshToken: refreshToken }); // throw back the data
 
         })
 

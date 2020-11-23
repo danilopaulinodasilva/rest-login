@@ -36,11 +36,11 @@ class LogController {
         Log.save(guid,page,"",ip)
 
             .then((response) => {
-                res.sendStatus(204);
+                res.status(204).json({"ok":true});
             })
 
             .catch((err) => {
-                res.sendStatus(400);
+                res.status(400).json({"ok":false});
             })
 
     }
@@ -58,11 +58,11 @@ class LogController {
         Log.save(guid,"",file,ip)
 
             .then((response) => {
-                res.sendStatus(204);
+                res.status(204).json({"ok":true});
             }) 
             
             .catch((err) => {
-                res.sendStatus(400);
+                res.status(400).json({"ok":false});
             });
 
     }

@@ -13,7 +13,7 @@ class RedisService {
 
         return new Promise((resolve,reject) => {
 
-            client.setex(key,'60',value, (err,reply) => {                
+            client.setex(key,'60*60*60',value, (err,reply) => {                
                 if(err) reject(err);
                 resolve(reply);
             });
